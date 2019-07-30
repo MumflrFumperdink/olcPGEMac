@@ -12,7 +12,7 @@ That's it! This implementation of the library uses the native Cocoa api for Mac,
 All you need to get the project up and running in Xcode is to use the Shell script called, "setup.sh". Make sure you have all of the dependencies installed:
 
 ```sh
-$ cd OneLoneCoderMac
+$ cd olcPGEMac
 $ ./setup.sh
 ```
 Then, you should open up Xcode (you should quit it if it is already open) and "Create a new Xcode Project". In the macOS tab, you should see a OneLoneCoder section with a PGE app:
