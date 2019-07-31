@@ -1089,7 +1089,7 @@ namespace olc
 		sAppName = "Undefined";
 		olc::PGEX::pge = this;
 	}
-        
+
 	olc::rcode PixelGameEngine::Construct(uint32_t screen_w, uint32_t screen_h, uint32_t pixel_w, uint32_t pixel_h, bool full_screen)
 	{
 		nScreenWidth = screen_w;
@@ -1780,7 +1780,7 @@ namespace olc
 #ifndef __APPLE__
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 #endif
-        
+
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nScreenWidth, nScreenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, pDefaultDrawTarget->GetData());
 #if __APPLE__
         glUseProgram(shader);
@@ -1813,7 +1813,7 @@ namespace olc
                 }
                 olc_UpdateViewport();
                 olc_ProcessWindowEvents();
-                
+
                 glClear(GL_COLOR_BUFFER_BIT);
 #elif not _WIN32
 				// Handle Xlib Message Loop - we do this in the
@@ -1958,7 +1958,7 @@ namespace olc
 					bAtomActive = false;
 
                 //glDrawArrays();
-                
+
 				// Display Graphics
 #ifndef __APPLE__
 				glViewport(nViewX, nViewY, nViewW, nViewH);
@@ -1967,13 +1967,13 @@ namespace olc
 				// TODO: This is a bit slow (especially in debug, but 100x faster in release mode???)
 				// Copy pixel array into texture
 				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, nScreenWidth, nScreenHeight, GL_RGBA, GL_UNSIGNED_BYTE, pDefaultDrawTarget->GetData());
-                
+
 #ifdef __APPLE__
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, glBuffer);
-                
+
                 glUseProgram(shader);
-                
+
                 glBindVertexArray(vao);
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 #else
@@ -2206,7 +2206,7 @@ namespace olc
         const char *src = source.c_str();
         glShaderSource(shader, 1, &src, nullptr);
         glCompileShader(shader);
-        
+
         int result;
         glGetShaderiv( shader, GL_COMPILE_STATUS, &result);
         if (result == GL_FALSE) {
@@ -2217,30 +2217,30 @@ namespace olc
             std::cout << "Shader Failed to Compile: " << std::endl;
             std::cout << message << std::endl;
         }
-        
+
         return shader;
     }
-    
+
     static unsigned int load_shader (const std::string& vertexShader, const std::string& fragementShader)
     {
         unsigned int program = glCreateProgram();
         unsigned int vs = compile_shader( GL_VERTEX_SHADER, vertexShader );
         unsigned int fs = compile_shader( GL_FRAGMENT_SHADER, fragementShader );
-        
+
         glAttachShader( program, vs);
         glAttachShader( program, fs);
         glLinkProgram( program );
         glValidateProgram( program );
-        
+
         glDetachShader( program, vs );
         glDetachShader( program, fs );
-        
+
         glDeleteShader(vs);
         glDeleteShader(fs);
-        
+
         return program;
     }
-    
+
     bool PixelGameEngine::olc_OpenGLCreate()
     {
         shader = load_shader(
@@ -2249,10 +2249,10 @@ namespace olc
                 layout (location = 0) in vec3 aPos;
                 layout (location = 1) in vec3 aColor;
                 layout (location = 2) in vec2 aTexCoord;
-                  
+
                 out vec3 ourColor;
                 out vec2 TexCoord;
-                  
+
                 void main() {
                     gl_Position = vec4(aPos, 1.0);
                     ourColor = aColor;
@@ -2262,31 +2262,31 @@ namespace olc
             R"(
                 #version 330 core
                 out vec4 FragColor;
-        
+
                 in vec3 ourColor;
                 in vec2 TexCoord;
-        
+
                 // texture sampler
                 uniform sampler2D glbuffer;
-        
+
                 void main() {
                     FragColor = texture(glbuffer, TexCoord);
                 }
             )"
         );
-        
+
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &vbo);
         glGenBuffers(1, &ebo);
-        
+
         glBindVertexArray(vao);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-        
+
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
         // color attribute
@@ -2295,7 +2295,7 @@ namespace olc
         // texture coord attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
         glEnableVertexAttribArray(2);
-        
+
         glClearColor(0.0, 0.0, 0.0, 1);
         return true;
     }
@@ -2374,21 +2374,21 @@ namespace olc
 #ifdef __APPLE__
     #define NUM_OF_MOUSE_BUTTONS 2
     #define NUM_OF_KEYS 69
-    
+
     void PixelGameEngine::olc_ProcessWindowEvents()
     {
         float mouseX = get_mouse_position_x();
         float mouseY = get_mouse_position_y();
         olc_UpdateMouse(mouseX, mouseY);
-        
+
         bHasInputFocus = window_is_focused();
-        
+
         for (char i = 0; i < NUM_OF_MOUSE_BUTTONS; i++) {
             pMouseNewState[i] = get_mouse_button(i);
         }
-        
+
         olc_UpdateMouseWheel(get_mouse_scroll_y());
-        
+
         for (int i = 0; i < NUM_OF_KEYS; i++) {
             if  (i < 55) {
                 if (get_key_down(::Key::All[i])) {
@@ -2460,24 +2460,42 @@ namespace olc
             }
         }
     }
-    
+
     olc::rcode PixelGameEngine::olc_WindowCreate()
     {
         init_application();
         nWindowWidth = nScreenWidth * nPixelWidth;
         nWindowHeight = nScreenHeight * nPixelHeight;
         create_window("Tests", nWindowWidth, nWindowHeight);
-        
+
         set_window_background_color(0, 0, 0, 1);
         set_window_title_bar_hidden (false);
         set_window_title_hidden (false);
         set_window_resizable(false);
-        
+
+        bool outOfBounds = false;
+        while ((nWindowWidth >= get_screen_width() || nWindowHeight >= get_screen_height()) && (nPixelWidth > 0 || nPixelHeight > 0)) {
+            outOfBounds = true;
+            nWindowWidth = nScreenWidth * (--nPixelWidth);
+            nWindowHeight = nScreenHeight * (--nPixelHeight);
+            set_window_size(nWindowWidth, nWindowHeight);
+        }
+
+        if (outOfBounds) {
+            if (nPixelWidth == 0 || nPixelHeight == 0) {
+                std::cout << std::endl << "The screen dimension given cannot fit on your screen." << std::endl << std::endl;
+                return olc::rcode::FAIL;
+            }
+            else {
+                std::cout << std::endl << "Had to lower pixel dimension in order to fit on screen." << std::endl << std::endl;
+            }
+        }
+
         std::cout << "OpenGL Vendor: " << glGetString(GL_VENDOR) << '\n';
         std::cout << "OpenGL Renderer: " << glGetString(GL_RENDERER) << '\n';
         std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << '\n';
         std::cout << "OpenGL Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << '\n';
-        
+
         return olc::rcode::OK;
     }
 #else
