@@ -25,3 +25,16 @@ Then, you should open up Xcode (you should quit it if it is already open) and "C
 ![Image1](https://i.ibb.co/g4pBXQn/Screen-Shot-2019-07-29-at-10-53-33-PM.png)
 
 Once you name your app, and save it, open the App folder. Inside is the main.cpp file. Build it first to make sure it works!
+
+### Usage for those whom hate Xcode
+
+If you do not want to use Xcode, then simply go inside the OneLoneCoder folder. Go in to the terminal and type this:
+
+```sh
+$ cd OneLoneCoder/PGE App.xctemplate
+$ make
+```
+
+You should end up with a file called 'ouput'. It should open a window like this:
+
+![Image2](https://i.ibb.co/1T9FzqK/Screen-Shot-2019-07-31-at-5-16-18-PM.png)
