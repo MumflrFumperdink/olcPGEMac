@@ -31,7 +31,7 @@ Once you name your app, and save it, open the App folder. Inside is the main.cpp
 If you do not want to use Xcode, then simply go inside the OneLoneCoder folder. Go in to the terminal and type this:
 
 ```sh
-$ cd OneLoneCoder/PGE App.xctemplate
+$ cd OneLoneCoder/PGE\ App.xctemplate
 $ make
 ```
 
