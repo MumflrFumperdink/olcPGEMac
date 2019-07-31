@@ -25,7 +25,3 @@ Then, you should open up Xcode (you should quit it if it is already open) and "C
 ![Image1](https://i.ibb.co/g4pBXQn/Screen-Shot-2019-07-29-at-10-53-33-PM.png)
 
 Once you name your app, and save it, open the App folder. Inside is the main.cpp file. Build it first to make sure it works!
-
-![Image2](https://i.ibb.co/g4pBXQn/Screen-Shot-2019-07-29-at-10-53-33-PM.png)
-
-Once you name your app, and save it, open the App folder. Inside is the main.cpp file. Build it first to make sure it works!
