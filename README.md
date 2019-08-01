@@ -2,7 +2,6 @@
 
 The [PixelGameEngine](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac! The dependencies that you must have are:
 
-  - Xcode
   - OpenGL 3.0 (Installed with developer tools)
   - libpng
 
