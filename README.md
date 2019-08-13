@@ -9,7 +9,7 @@ That's it! This implementation of the library uses the native Cocoa api for Mac,
 
 #### Example:
 
-![Image](https://i.ibb.co/TLJP3PC/Screen-Shot-2019-07-30-at-10-06-35-AM.png)
+![Image](https://i.ibb.co/HDXmhJw/Screen-Shot-2019-08-12-at-11-00-41-PM.png)
 
 ### Installation
 
