@@ -36,4 +36,4 @@ $ make
 
 You should end up with a file called 'ouput'. It should open a window like this:
 
-![Image2](https://i.ibb.co/1T9FzqK/Screen-Shot-2019-07-31-at-5-16-18-PM.png)
+![Image2](https://i.ibb.co/hsz9SMF/Screen-Shot-2019-08-12-at-11-18-52-PM.png)
