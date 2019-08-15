@@ -11,9 +11,11 @@ That's it! This implementation of the library uses the native Cocoa api for Mac,
 
 ![Image](https://i.ibb.co/HDXmhJw/Screen-Shot-2019-08-12-at-11-00-41-PM.png)
 
-### Installation
+## Installation
 
-All you need to get the project up and running in Xcode is to use the Shell script called, "setup.sh". Make sure you have all of the dependencies installed:
+### Xcode Installation
+
+First, make sure you have Xcode, and if not, download it. All you need to get the project up and running in Xcode is to use the Shell script called, "setup.sh". Make sure you have all of the dependencies installed:
 
 ```sh
 $ cd olcPGEMac
