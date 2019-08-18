@@ -204,10 +204,10 @@
 	static wglSwapInterval_t *wglSwapInterval;
 #elif __APPLE__
     #include <cocoawindowing.h>
-    #include <OpenGL/gl3.h>
     #ifndef GL_SILENCE_DEPRECATION
         #define GL_SILENCE_DEPRECATION
     #endif
+    #include <OpenGL/gl3.h>
     #include <png.h>
 #else
 	#include <GL/gl.h>
