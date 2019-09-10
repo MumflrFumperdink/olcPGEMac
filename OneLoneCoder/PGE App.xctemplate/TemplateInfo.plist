@@ -7,7 +7,7 @@
 	<key>Concrete</key>
 	<true/>
 	<key>Description</key>
-	<string>This template creates a olc PGE Application Bundle.</string>
+	<string>This template creates a olc::PGE Application Bundle.</string>
 	<key>Options</key>
 	<array>
 		<dict>
@@ -34,6 +34,7 @@
 	<key>Nodes</key>
 	<array>
 		<string>libcocoawindowing_s.a</string>
+		<string>libpng.a</string>
 		<string>cocoawindowing.h</string>
 		<string>olcPixelGameEngine.h</string>
 		<string>main.cpp</string>
@@ -48,6 +49,15 @@
 			</array>
 			<key>Path</key>
 			<string>bin/libcocoawindowing_s.a</string>
+		</dict>
+		<key>libpng.a</key>
+		<dict>
+			<key>Group</key>
+			<array>
+				<string>bin</string>
+			</array>
+			<key>Path</key>
+			<string>/usr/local/lib/libpng.a</string>
 		</dict>
 		<key>cocoawindowing.h</key>
 		<dict>
