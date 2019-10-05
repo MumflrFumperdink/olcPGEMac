@@ -53,6 +53,7 @@ extern "C" float get_window_hidpi_height ();
 extern "C" float get_screen_width ();
 extern "C" float get_screen_height ();
 
+extern "C" const char* get_current_working_directory();
 extern "C" const char* get_application_support_directory ( const char *appName = nullptr );
 extern "C" void create_directory_at ( const char* dir );
 extern "C" void remove_file_at ( const char* filename );
@@ -65,13 +66,12 @@ enum ModifierKeys : size_t
     SHIFT = 3
 };
 
-// https://developer.apple.com/documentation/appkit/nsevent/1535851-function-key_unicodes
 namespace Key {
-    
+
     enum Keys : size_t
     {
         KEY_NONE = 0,
-        
+
         KEY_A = 'a',
         KEY_B = 'b',
         KEY_C = 'c',
@@ -98,7 +98,7 @@ namespace Key {
         KEY_X = 'x',
         KEY_Y = 'y',
         KEY_Z = 'z',
-        
+
         KEY_0 = 48,
         KEY_1 = 49,
         KEY_2 = 50,
@@ -109,7 +109,7 @@ namespace Key {
         KEY_7 = 55,
         KEY_8 = 56,
         KEY_9 = 57,
-        
+
         KEY_PLUS = '+',
         KEY_MINUS = '-',
         KEY_STAR = '*',
@@ -142,24 +142,24 @@ namespace Key {
         KEY_LESSTHAN = '<',
         KEY_GREATERTHAN = '>',
         // NOTE(Xavier): (2017.11.13) The '|' key is still missing.
-        
+
         KEY_ENTER = 13,
         KEY_TAB = 9,
         KEY_DELETE = 127,
         KEY_ESCAPE = 27,
         KEY_RETURN = 3,
         KEY_SPACE = ' ',
-        
+
         KEY_UP = 0xF700,
         KEY_DOWN = 0xF701,
         KEY_LEFT = 0xF702,
         KEY_RIGHT = 0xF703,
-        
+
         KEY_UP_ = 128,
         KEY_DOWN_ = 129,
         KEY_LEFT_ = 130,
         KEY_RIGHT_ = 131,
-        
+
         KEY_F1 = 0xF704,
         KEY_F2 = 0xF705,
         KEY_F3 = 0xF706,
@@ -172,7 +172,7 @@ namespace Key {
         KEY_F10 = 0xF70D,
         KEY_F11 = 0xF70E,
         KEY_F12 = 0xF70F,
-        
+
         KEY_F1_ = 132,
         KEY_F2_ = 133,
         KEY_F3_ = 134,
@@ -185,7 +185,7 @@ namespace Key {
         KEY_F10_ = 141,
         KEY_F11_ = 142,
         KEY_F12_ = 143,
-        
+
         KEY_INSERT = 0xF727,
         KEY_DEL = 0xF728,
         KEY_HOME = 0xF729,
@@ -193,7 +193,7 @@ namespace Key {
         KEY_END = 0xF72B,
         KEY_PGUP = 0xF72C,
         KEY_PGDN = 0xF72D,
-        
+
         KEY_INSERT_ = 144,
         KEY_DEL_ = 145,
         KEY_HOME_ = 146,
@@ -201,10 +201,10 @@ namespace Key {
         KEY_END_ = 148,
         KEY_PGUP_ = 149,
         KEY_PGDN_ = 150,
-        
+
         KEY_SCROLL = 0xF72F,
         KEY_PAUSE = 0xF730,
-        
+
         KEY_SCROLL_ = 150,
         KEY_PAUSE_ = 151
     };

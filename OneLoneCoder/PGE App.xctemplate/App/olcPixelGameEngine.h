@@ -803,6 +803,15 @@ namespace olc
 		png_structp png;
 		png_infop info;
 
+#ifdef __APPLE__
+    std::string currentDir(get_current_working_directory());
+    currentDir += "/";
+    sImageFile = currentDir + sImageFile;
+	#ifdef _DEBUG
+	        std::cout << "sImageFile = " + sImageFile << std::endl;
+	#endif
+#endif
+
 		FILE *f = fopen(sImageFile.c_str(), "rb");
 		if (!f) return olc::NO_FILE;
 
