@@ -2,8 +2,10 @@
 
 The [PixelGameEngine](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac! The dependencies that you must have are:
 
+  - Cocoa framework (Installed with developer tools)
+  - Quartz framework (Installed with developer tools)
   - OpenGL 3.0 (Installed with developer tools)
-  - libpng
+  - libpng (May be installed with [brew](https://brew.sh/))
 
 That's it! This implementation of the library uses the native Cocoa api for Mac, using a modified library from [xslattery](https://github.com/xslattery/Cocoa-OpenGL-Windowing-Lib).
 
