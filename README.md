@@ -1,4 +1,6 @@
-# olc::PGE for Mac
+# olc::PGE for Mac (Deprecated)
+
+####This implementation currently does not work, but a new version (with PGE 2.0) is being made that will be compatible with mac.
 
 The [PixelGameEngine](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac! The dependencies that you must have are:
 
