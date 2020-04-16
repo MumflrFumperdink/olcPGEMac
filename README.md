@@ -2,7 +2,7 @@
 
 The [PixelGameEngine 2.0](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac in only the header file! The dependency that you must have is:
 
-  - libpng (May be installed with [brew](https://brew.sh/), use the command ```sh brew install libpng```)
+  - libpng (May be installed with [brew](https://brew.sh/), use the command ```brew install libpng```)
 
 That's it!
 
