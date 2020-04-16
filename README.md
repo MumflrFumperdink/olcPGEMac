@@ -18,15 +18,15 @@ $ ./setup.sh
 ```
 Then, you should open up Xcode (you should quit it if it is already open) and "Create a new Xcode Project". In the macOS tab, you should see a OneLoneCoder section with a PGE app:
 
-![Image1](https://i.ibb.co/0DHb3yN/Screen-Shot-2020-04-16-at-4-52-48-PM.png)
+![Image1](https://i.imgur.com/uYUP1xW.png)
 
 Once you name your app, and save it, you should see a screen like the following. Click the "Signing and Capabilities" tab at the top:
 
-![Image2](https://i.ibb.co/LRXWP3x/Screen-Shot-2020-04-16-at-4-43-14-PM.png)
+![Image2](https://i.imgur.com/PsQDDqW.jpg)
 
 Once you are there, go down to the "Hardened Runtime" section and click on "Disable Library Validation":
 
-![Image3](https://i.ibb.co/TcsX31V/Screen-Shot-2020-04-16-at-4-56-46-PM.png)
+![Image3](https://i.imgur.com/ku48xJZ.jpg)
 
 And that's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
 
