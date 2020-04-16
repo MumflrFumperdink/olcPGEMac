@@ -33,58 +33,20 @@
 	</array>
 	<key>Nodes</key>
 	<array>
-		<string>libcocoawindowing_s.a</string>
-		<string>libpng.a</string>
-		<string>cocoawindowing.h</string>
 		<string>olcPixelGameEngine.h</string>
 		<string>main.cpp</string>
 	</array>
 	<key>Definitions</key>
 	<dict>
-		<key>libcocoawindowing_s.a</key>
-		<dict>
-			<key>Group</key>
-			<array>
-				<string>bin</string>
-			</array>
-			<key>Path</key>
-			<string>bin/libcocoawindowing_s.a</string>
-		</dict>
-		<key>libpng.a</key>
-		<dict>
-			<key>Group</key>
-			<array>
-				<string>bin</string>
-			</array>
-			<key>Path</key>
-			<string>/usr/local/lib/libpng.a</string>
-		</dict>
-		<key>cocoawindowing.h</key>
-		<dict>
-			<key>Group</key>
-			<array>
-				<string>include</string>
-			</array>
-			<key>Path</key>
-			<string>include/cocoawindowing.h</string>
-		</dict>
 		<key>olcPixelGameEngine.h</key>
 		<dict>
-			<key>Group</key>
-			<array>
-				<string>App</string>
-			</array>
 			<key>Path</key>
-			<string>App/olcPixelGameEngine.h</string>
+			<string>olcPixelGameEngine.h</string>
 		</dict>
 		<key>main.cpp</key>
 		<dict>
-			<key>Group</key>
-			<array>
-				<string>App</string>
-			</array>
 			<key>Path</key>
-			<string>App/main.cpp</string>
+			<string>main.cpp</string>
 		</dict>
 	</dict>
 	<key>Project</key>
@@ -92,9 +54,9 @@
 		<key>SharedSettings</key>
 		<dict>
 			<key>OTHER_CPLUSPLUSFLAGS</key>
-			<string>-I$(SRCROOT)/$(PRODUCT_NAME) -I/usr/local/include</string>
+			<string>-I/usr/local/include</string>
 			<key>OTHER_LDFLAGS</key>
-			<string>-framework Cocoa -framework Quartz -framework OpenGL -lcocoawindowing_s -lpng -L./ -L/usr/local/lib</string>
+			<string>-L./ -L/usr/local/lib -framework OpenGL -framework GLUT -lpng</string>
 			<key>LIBRARY_SEARCH_PATHS</key>
 			<string>$(SRCROOT)/$(PRODUCT_NAME)</string>
 			<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
