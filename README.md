@@ -32,7 +32,7 @@ And that's it! You can go to main.cpp in the folder on the left to start coding.
 
 ### Command Line Usage
 
-If you do not want to use Xcode, then simply go inside the OneLoneCoder folder. Go in to the terminal and type this:
+Simply go inside the OneLoneCoder folder - there's a makfile. Use it in the terminal by typing this:
 
 ```sh
 $ cd OneLoneCoder/PGE\ App.xctemplate
