@@ -30,6 +30,19 @@ Once you are there, go down to the "Hardened Runtime" section and click on "Disa
 
 And that's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
 
+### libpng installed with macports
+
+If you chose to install libpng with macports then you need to do the following steps:
+
+In the Terminal, execute this command to sign the library:
+```sh
+sudo codesign -f -s "YOURDEVELOPEREMAIL" /opt/local/lib/libpng*.dylib
+```
+In XCode highlight your project and switch to the tab "Build Settings"
+
+Add to the option OTHER_LD_FLAGS the value "-L/opt/local/lib"
+Add to the option OTHER_CPLUSPLUSFLAGS the value "-I/opt/local/include"
+
 ### Command Line Usage
 
 Simply go inside the OneLoneCoder folder - there's a makefile. Use it in the terminal by typing this:
