@@ -257,14 +257,14 @@ int main()
 namespace olc
 {
     class PixelGameEngine;
-        
+
     // Pixel Game Engine Advanced Configuration
     constexpr uint8_t  nMouseButtons = 5;
     constexpr uint8_t  nDefaultAlpha = 0xFF;
     constexpr uint32_t nDefaultPixel = (nDefaultAlpha << 24);
     enum rcode { FAIL = 0, OK = 1, NO_FILE = -1 };
 
-    
+
 
     // O------------------------------------------------------------------------------O
     // | olc::Pixel - Represents a 32-Bit RGBA colour                                 |
@@ -509,7 +509,7 @@ namespace olc
         virtual void       ClearBuffer(olc::Pixel p, bool bDepth) = 0;
         static olc::PixelGameEngine* ptrPGE;
     };
-    
+
     class Platform
     {
     public:
@@ -525,7 +525,7 @@ namespace olc
         virtual olc::rcode HandleSystemEvent() = 0;
         static olc::PixelGameEngine* ptrPGE;
     };
-    
+
     static std::unique_ptr<Renderer> renderer;
     static std::unique_ptr<Platform> platform;
     static std::map<size_t, uint8_t> mapKeys;
@@ -649,14 +649,14 @@ namespace olc
         void DrawDecal(const olc::vf2d& pos, olc::Decal *decal, const olc::vf2d& scale = { 1.0f,1.0f }, const olc::Pixel& tint = olc::WHITE);
         // Draws a region of a decal, with optional scale and tinting
         void DrawPartialDecal(const olc::vf2d& pos, olc::Decal* decal, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::vf2d& scale = { 1.0f,1.0f }, const olc::Pixel& tint = olc::WHITE);
-        
+
         void DrawWarpedDecal(olc::Decal* decal, const olc::vf2d(&pos)[4], const olc::Pixel& tint = olc::WHITE);
         void DrawWarpedDecal(olc::Decal* decal, const olc::vf2d* pos, const olc::Pixel& tint = olc::WHITE);
         void DrawWarpedDecal(olc::Decal* decal, const std::array<olc::vf2d, 4>& pos, const olc::Pixel& tint = olc::WHITE);
 
         void DrawRotatedDecal(const olc::vf2d& pos, olc::Decal* decal, const float fAngle, const olc::vf2d& center = { 0.0f, 0.0f }, const olc::vf2d& scale = { 1.0f,1.0f }, const olc::Pixel& tint = olc::WHITE);
 
-        
+
         // Draws a single line of text
         void DrawString(int32_t x, int32_t y, const std::string& sText, Pixel col = olc::WHITE, uint32_t scale = 1);
         void DrawString(const olc::vi2d& pos, const std::string& sText, Pixel col = olc::WHITE, uint32_t scale = 1);
@@ -2282,15 +2282,15 @@ namespace olc
                 int argc = 0;
                 char *argv[1] = {(char*)""};
                 glutInit(&argc, argv);
-                
+
                 glutInitWindowPosition(0, 0);
                 glutInitWindowSize(512, 512);
-                
+
                 glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH | GLUT_RGBA);
 
                 // Creates the window and the OpenGL context for it
                 glutCreateWindow("OneLoneCoder.com - Pixel Game Engine");
-            
+
                 glEnable(GL_TEXTURE_2D); // Turn on texturing
                 glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
             #endif
@@ -2331,25 +2331,25 @@ namespace olc
 
             glDeviceContext = glXCreateContext(olc_Display, olc_VisualInfo, nullptr, GL_TRUE);
             glXMakeCurrent(olc_Display, *olc_Window, glDeviceContext);
-            
+
             XWindowAttributes gwa;
             XGetWindowAttributes(olc_Display, *olc_Window, &gwa);
             glViewport(0, 0, gwa.width, gwa.height);
-            
+
             glSwapIntervalEXT = nullptr;
             glSwapIntervalEXT = (glSwapInterval_t*)glXGetProcAddress((unsigned char*)"glXSwapIntervalEXT");
-            
+
             if (glSwapIntervalEXT == nullptr && !bVSYNC)
             {
                 printf("NOTE: Could not disable VSYNC, glXSwapIntervalEXT() was not found!\n");
                 printf("      Don't worry though, things will still work, it's just the\n");
                 printf("      frame rate will be capped to your monitors refresh rate - javidx9\n");
             }
-            
+
             if (glSwapIntervalEXT != nullptr && !bVSYNC)
                 glSwapIntervalEXT(olc_Display, *olc_Window, 0);
         #endif
-        
+
         #if defined(__APPLE__)
             mFullScreen = bFullScreen;
             if (!bVSYNC) {
@@ -2390,7 +2390,7 @@ namespace olc
         #if defined(__linux__)
             X11::glXSwapBuffers(olc_Display, *olc_Window);
         #endif
-            
+
         #if defined(__APPLE__)
             glutSwapBuffers();
         #endif
@@ -2711,7 +2711,7 @@ namespace olc
             // Load sprite from file
             bmp = Gdiplus::Bitmap::FromFile(ConvertS2W(sImageFile).c_str());
         }
-        
+
         if (bmp->GetLastStatus() != Gdiplus::Ok) return olc::NO_FILE;
         width = bmp->GetWidth();
         height = bmp->GetHeight();
@@ -2784,33 +2784,33 @@ namespace olc
         {
             using namespace X11;
             XInitThreads();
-    
+
             // Grab the deafult display and window
             olc_Display = XOpenDisplay(NULL);
             olc_WindowRoot = DefaultRootWindow(olc_Display);
-    
+
             // Based on the display capabilities, configure the appearance of the window
             GLint olc_GLAttribs[] = { GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None };
             olc_VisualInfo = glXChooseVisual(olc_Display, 0, olc_GLAttribs);
             olc_ColourMap = XCreateColormap(olc_Display, olc_WindowRoot, olc_VisualInfo->visual, AllocNone);
             olc_SetWindowAttribs.colormap = olc_ColourMap;
-    
+
             // Register which events we are interested in receiving
             olc_SetWindowAttribs.event_mask = ExposureMask | KeyPressMask | KeyReleaseMask |
                 ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | StructureNotifyMask;
-    
+
             // Create the window
             olc_Window = XCreateWindow(olc_Display, olc_WindowRoot, vWindowPos.x, vWindowPos.y,
                 vWindowSize.x, vWindowSize.y,
                 0, olc_VisualInfo->depth, InputOutput, olc_VisualInfo->visual,
                 CWColormap | CWEventMask, &olc_SetWindowAttribs);
-    
+
             Atom wmDelete = XInternAtom(olc_Display, "WM_DELETE_WINDOW", true);
             XSetWMProtocols(olc_Display, olc_Window, &wmDelete, 1);
-    
+
             XMapWindow(olc_Display, olc_Window);
             XStoreName(olc_Display, olc_Window, "OneLoneCoder.com - Pixel Game Engine");
-    
+
             if (bFullScreen) // Thanks DragonEye, again :D
             {
                 Atom wm_state;
@@ -2835,7 +2835,7 @@ namespace olc
                 vWindowSize.x = gwa.width;
                 vWindowSize.y = gwa.height;
             }
-    
+
             // Create Keyboard Mapping
             mapKeys[0x00] = Key::NONE;
             mapKeys[0x61] = Key::A; mapKeys[0x62] = Key::B; mapKeys[0x63] = Key::C; mapKeys[0x64] = Key::D; mapKeys[0x65] = Key::E;
@@ -2844,27 +2844,27 @@ namespace olc
             mapKeys[0x70] = Key::P; mapKeys[0x71] = Key::Q; mapKeys[0x72] = Key::R; mapKeys[0x73] = Key::S; mapKeys[0x74] = Key::T;
             mapKeys[0x75] = Key::U; mapKeys[0x76] = Key::V; mapKeys[0x77] = Key::W; mapKeys[0x78] = Key::X; mapKeys[0x79] = Key::Y;
             mapKeys[0x7A] = Key::Z;
-    
+
             mapKeys[XK_F1] = Key::F1; mapKeys[XK_F2] = Key::F2; mapKeys[XK_F3] = Key::F3; mapKeys[XK_F4] = Key::F4;
             mapKeys[XK_F5] = Key::F5; mapKeys[XK_F6] = Key::F6; mapKeys[XK_F7] = Key::F7; mapKeys[XK_F8] = Key::F8;
             mapKeys[XK_F9] = Key::F9; mapKeys[XK_F10] = Key::F10; mapKeys[XK_F11] = Key::F11; mapKeys[XK_F12] = Key::F12;
-    
+
             mapKeys[XK_Down] = Key::DOWN; mapKeys[XK_Left] = Key::LEFT; mapKeys[XK_Right] = Key::RIGHT; mapKeys[XK_Up] = Key::UP;
             mapKeys[XK_KP_Enter] = Key::ENTER; mapKeys[XK_Return] = Key::ENTER;
-    
+
             mapKeys[XK_BackSpace] = Key::BACK; mapKeys[XK_Escape] = Key::ESCAPE; mapKeys[XK_Linefeed] = Key::ENTER;    mapKeys[XK_Pause] = Key::PAUSE;
             mapKeys[XK_Scroll_Lock] = Key::SCROLL; mapKeys[XK_Tab] = Key::TAB; mapKeys[XK_Delete] = Key::DEL; mapKeys[XK_Home] = Key::HOME;
             mapKeys[XK_End] = Key::END; mapKeys[XK_Page_Up] = Key::PGUP; mapKeys[XK_Page_Down] = Key::PGDN;    mapKeys[XK_Insert] = Key::INS;
             mapKeys[XK_Shift_L] = Key::SHIFT; mapKeys[XK_Shift_R] = Key::SHIFT; mapKeys[XK_Control_L] = Key::CTRL; mapKeys[XK_Control_R] = Key::CTRL;
             mapKeys[XK_space] = Key::SPACE; mapKeys[XK_period] = Key::PERIOD;
-    
+
             mapKeys[XK_0] = Key::K0; mapKeys[XK_1] = Key::K1; mapKeys[XK_2] = Key::K2; mapKeys[XK_3] = Key::K3; mapKeys[XK_4] = Key::K4;
             mapKeys[XK_5] = Key::K5; mapKeys[XK_6] = Key::K6; mapKeys[XK_7] = Key::K7; mapKeys[XK_8] = Key::K8; mapKeys[XK_9] = Key::K9;
-    
+
             mapKeys[XK_KP_0] = Key::NP0; mapKeys[XK_KP_1] = Key::NP1; mapKeys[XK_KP_2] = Key::NP2; mapKeys[XK_KP_3] = Key::NP3; mapKeys[XK_KP_4] = Key::NP4;
             mapKeys[XK_KP_5] = Key::NP5; mapKeys[XK_KP_6] = Key::NP6; mapKeys[XK_KP_7] = Key::NP7; mapKeys[XK_KP_8] = Key::NP8; mapKeys[XK_KP_9] = Key::NP9;
             mapKeys[XK_KP_Multiply] = Key::NP_MUL; mapKeys[XK_KP_Add] = Key::NP_ADD; mapKeys[XK_KP_Divide] = Key::NP_DIV; mapKeys[XK_KP_Subtract] = Key::NP_SUB; mapKeys[XK_KP_Decimal] = Key::NP_DECIMAL;
-    
+
             return olc::OK;
         }
 
@@ -3071,24 +3071,24 @@ namespace olc {
     olc::rcode PixelGameEngine::Start()
     {
         if (platform->ApplicationStartUp() != olc::OK) return olc::FAIL;
-        
+
         // Construct the window
         if (platform->CreateWindowPane({ 30,30 }, vWindowSize, bFullScreen) != olc::OK) return olc::FAIL;
         olc_UpdateWindowSize(vWindowSize.x, vWindowSize.y);
 
-        
+
         if (platform->ThreadStartUp() == olc::FAIL)  return olc::FAIL;
-        
+
         olc_PrepareEngine();
 
         if (!OnUserCreate()) return olc::FAIL;
-        
+
         glutWMCloseFunc([]() -> void {
             platform->ThreadCleanUp();
             platform->ApplicationCleanUp();
             exit(0);
         });
-        
+
         platform->StartSystemEventLoop();
 
         //This code will not even be run but why not
@@ -3101,7 +3101,7 @@ namespace olc {
     {
     private:
     public:
-        
+
         virtual olc::rcode ApplicationStartUp() override {
             return olc::rcode::OK;
         }
@@ -3128,11 +3128,11 @@ namespace olc {
             else
                 return olc::rcode::FAIL;
         }
-        
+
         static void ThreadFunct() {
             glutPostRedisplay();
         }
-        
+
         static void DrawFunct() {
             ptrPGE->olc_CoreUpdate();
         }
@@ -3140,18 +3140,18 @@ namespace olc {
         virtual olc::rcode CreateWindowPane(const olc::vi2d& vWindowPos, olc::vi2d& vWindowSize, bool bFullScreen) override
         {
             renderer->PrepareDevice();
-            
-            
+
+
             if (bFullScreen)
             {
                 glutFullScreen();
             }
-            
+
             if (vWindowSize.x > glutGet(GLUT_SCREEN_WIDTH) || vWindowSize.y > glutGet(GLUT_SCREEN_HEIGHT)) {
                 perror("ERROR: The specified window dimensions do not fit on your screen\n");
                 return olc::FAIL;
             }
-            
+
             // Create Keyboard Mapping
             mapKeys[0x00] = Key::NONE;
             mapKeys['a'] = Key::A; mapKeys['b'] = Key::B; mapKeys['c'] = Key::C; mapKeys['d'] = Key::D; mapKeys['e'] = Key::E;
@@ -3160,22 +3160,22 @@ namespace olc {
             mapKeys['p'] = Key::P; mapKeys['q'] = Key::Q; mapKeys['r'] = Key::R; mapKeys['s'] = Key::S; mapKeys['t'] = Key::T;
             mapKeys['u'] = Key::U; mapKeys['v'] = Key::V; mapKeys['w'] = Key::W; mapKeys['x'] = Key::X; mapKeys['y'] = Key::Y;
             mapKeys['z'] = Key::Z;
-    
+
             mapKeys[GLUT_KEY_F1] = Key::F1; mapKeys[GLUT_KEY_F2] = Key::F2; mapKeys[GLUT_KEY_F3] = Key::F3; mapKeys[GLUT_KEY_F4] = Key::F4;
             mapKeys[GLUT_KEY_F5] = Key::F5; mapKeys[GLUT_KEY_F6] = Key::F6; mapKeys[GLUT_KEY_F7] = Key::F7; mapKeys[GLUT_KEY_F8] = Key::F8;
             mapKeys[GLUT_KEY_F9] = Key::F9; mapKeys[GLUT_KEY_F10] = Key::F10; mapKeys[GLUT_KEY_F11] = Key::F11; mapKeys[GLUT_KEY_F12] = Key::F12;
-    
-            mapKeys[GLUT_KEY_DOWN] = Key::DOWN; mapKeys[GLUT_KEY_LEFT] = Key::LEFT; mapKeys[GLUT_KEY_RIGHT] = Key::RIGHT; mapKeys[GLUT_KEY_UP] = Key::UP;
+
+            mapKeys[40] = Key::DOWN; mapKeys[37] = Key::LEFT; mapKeys[39] = Key::RIGHT; mapKeys[38] = Key::UP;
             mapKeys[13] = Key::ENTER;
-    
+
             mapKeys[127] = Key::BACK; mapKeys[27] = Key::ESCAPE;
             mapKeys[9] = Key::TAB;  mapKeys[GLUT_KEY_HOME] = Key::HOME;
             mapKeys[GLUT_KEY_END] = Key::END; mapKeys[GLUT_KEY_PAGE_UP] = Key::PGUP; mapKeys[GLUT_KEY_PAGE_DOWN] = Key::PGDN;    mapKeys[GLUT_KEY_INSERT] = Key::INS;
             mapKeys[32] = Key::SPACE; mapKeys[46] = Key::PERIOD;
-    
+
             mapKeys[48] = Key::K0; mapKeys[49] = Key::K1; mapKeys[50] = Key::K2; mapKeys[51] = Key::K3; mapKeys[52] = Key::K4;
             mapKeys[53] = Key::K5; mapKeys[54] = Key::K6; mapKeys[55] = Key::K7; mapKeys[56] = Key::K8; mapKeys[57] = Key::K9;
-            
+
             glutKeyboardFunc([](unsigned char key, int x, int y) -> void {
                 switch (glutGetModifiers()) {
                     case 0: //This is when there are no modifiers
@@ -3190,11 +3190,11 @@ namespace olc {
                     case GLUT_ACTIVE_ALT:
                         break;
                 }
-                
+
                 if (mapKeys[key])
                     ptrPGE->olc_UpdateKeyState(mapKeys[key], true);
             });
-            
+
             glutKeyboardUpFunc([](unsigned char key, int x, int y) -> void {
                 switch (glutGetModifiers()) {
                     case 0: //This is when there are no modifiers
@@ -3210,22 +3210,52 @@ namespace olc {
                         //No ALT in PGE
                         break;
                 }
+
+                if (mapKeys[key])
+                    ptrPGE->olc_UpdateKeyState(mapKeys[key], false);
+            });
+
+            //Special keys
+            glutSpecialFunc([](int key, int x, int y) -> void {
+                switch (key) { //Arrow keys overlap with ascii, thanks for foppelfb for pointing this out (https://github.com/MumflrFumperdink/olcPGEMac/issues/5)
+                    case GLUT_KEY_DOWN:
+                        key = 40;
+                        break;
+                    case GLUT_KEY_RIGHT:
+                        key = 39;
+                        break;
+                    case GLUT_KEY_UP:
+                        key = 38;
+                        break;
+                    case GLUT_KEY_LEFT:
+                        key = 37;
+                        break;
+                }
+                
+                if (mapKeys[key])
+                    ptrPGE->olc_UpdateKeyState(mapKeys[key], true);
+            });
+
+            glutSpecialUpFunc([](int key, int x, int y) -> void {
+                switch (key) {
+                    case GLUT_KEY_DOWN:
+                        key = 40;
+                        break;
+                    case GLUT_KEY_RIGHT:
+                        key = 39;
+                        break;
+                    case GLUT_KEY_UP:
+                        key = 38;
+                        break;
+                    case GLUT_KEY_LEFT:
+                        key = 37;
+                        break;
+                }
                 
                 if (mapKeys[key])
                     ptrPGE->olc_UpdateKeyState(mapKeys[key], false);
             });
-            
-            //Special keys
-            glutSpecialFunc([](int key, int x, int y) -> void {
-                if (mapKeys[key])
-                    ptrPGE->olc_UpdateKeyState(mapKeys[key], true);
-            });
-            
-            glutSpecialUpFunc([](int key, int x, int y) -> void {
-                if (mapKeys[key])
-                    ptrPGE->olc_UpdateKeyState(mapKeys[key], false);
-            });
-            
+
             glutMouseFunc([](int button, int state, int x, int y) -> void {
                 switch (button) {
                     case GLUT_LEFT_BUTTON:
@@ -3242,22 +3272,22 @@ namespace olc {
                         break;
                 }
             });
-            
+
             auto mouseMoveCall = [](int x, int y) -> void {
                 ptrPGE->olc_UpdateMouse(x, y);
             };
-            
+
             glutMotionFunc(mouseMoveCall);
             glutPassiveMotionFunc(mouseMoveCall);
-            
+
             glutEntryFunc([](int state) -> void {
                 if (state == GLUT_ENTERED) ptrPGE->olc_UpdateKeyFocus(true);
                 else if (state == GLUT_LEFT) ptrPGE->olc_UpdateKeyFocus(false);
             });
-            
+
             glutDisplayFunc(DrawFunct);
             glutIdleFunc(ThreadFunct);
-    
+
             return olc::OK;
         }
 
@@ -3395,7 +3425,7 @@ namespace olc
 #if defined(__linux__)
         platform = std::make_unique<olc::Platform_Linux>();
 #endif
-        
+
 #if defined(__APPLE__)
         platform = std::make_unique<olc::Platform_GLUT>();
 #endif
