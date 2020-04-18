@@ -3154,18 +3154,18 @@ namespace olc {
 
             // Create Keyboard Mapping
             mapKeys[0x00] = Key::NONE;
-            mapKeys['a'] = Key::A; mapKeys['b'] = Key::B; mapKeys['c'] = Key::C; mapKeys['d'] = Key::D; mapKeys['e'] = Key::E;
-            mapKeys['f'] = Key::F; mapKeys['g'] = Key::G; mapKeys['h'] = Key::H; mapKeys['i'] = Key::I; mapKeys['j'] = Key::J;
-            mapKeys['k'] = Key::K; mapKeys['l'] = Key::L; mapKeys['m'] = Key::M; mapKeys['n'] = Key::N; mapKeys['o'] = Key::O;
-            mapKeys['p'] = Key::P; mapKeys['q'] = Key::Q; mapKeys['r'] = Key::R; mapKeys['s'] = Key::S; mapKeys['t'] = Key::T;
-            mapKeys['u'] = Key::U; mapKeys['v'] = Key::V; mapKeys['w'] = Key::W; mapKeys['x'] = Key::X; mapKeys['y'] = Key::Y;
-            mapKeys['z'] = Key::Z;
+            mapKeys['A'] = Key::A; mapKeys['B'] = Key::B; mapKeys['C'] = Key::C; mapKeys['D'] = Key::D; mapKeys['E'] = Key::E;
+            mapKeys['F'] = Key::F; mapKeys['G'] = Key::G; mapKeys['H'] = Key::H; mapKeys['I'] = Key::I; mapKeys['J'] = Key::J;
+            mapKeys['K'] = Key::K; mapKeys['L'] = Key::L; mapKeys['M'] = Key::M; mapKeys['N'] = Key::N; mapKeys['O'] = Key::O;
+            mapKeys['P'] = Key::P; mapKeys['Q'] = Key::Q; mapKeys['R'] = Key::R; mapKeys['S'] = Key::S; mapKeys['T'] = Key::T;
+            mapKeys['U'] = Key::U; mapKeys['V'] = Key::V; mapKeys['W'] = Key::W; mapKeys['X'] = Key::X; mapKeys['Y'] = Key::Y;
+            mapKeys['Z'] = Key::Z;
 
             mapKeys[GLUT_KEY_F1] = Key::F1; mapKeys[GLUT_KEY_F2] = Key::F2; mapKeys[GLUT_KEY_F3] = Key::F3; mapKeys[GLUT_KEY_F4] = Key::F4;
             mapKeys[GLUT_KEY_F5] = Key::F5; mapKeys[GLUT_KEY_F6] = Key::F6; mapKeys[GLUT_KEY_F7] = Key::F7; mapKeys[GLUT_KEY_F8] = Key::F8;
             mapKeys[GLUT_KEY_F9] = Key::F9; mapKeys[GLUT_KEY_F10] = Key::F10; mapKeys[GLUT_KEY_F11] = Key::F11; mapKeys[GLUT_KEY_F12] = Key::F12;
 
-            mapKeys[40] = Key::DOWN; mapKeys[37] = Key::LEFT; mapKeys[39] = Key::RIGHT; mapKeys[38] = Key::UP;
+            mapKeys[GLUT_KEY_DOWN] = Key::DOWN; mapKeys[GLUT_KEY_LEFT] = Key::LEFT; mapKeys[GLUT_KEY_RIGHT] = Key::RIGHT; mapKeys[GLUT_KEY_UP] = Key::UP;
             mapKeys[13] = Key::ENTER;
 
             mapKeys[127] = Key::BACK; mapKeys[27] = Key::ESCAPE;
@@ -3179,15 +3179,17 @@ namespace olc {
             glutKeyboardFunc([](unsigned char key, int x, int y) -> void {
                 switch (glutGetModifiers()) {
                     case 0: //This is when there are no modifiers
+                        if ('a' <= key && key <= 'z') key -= 32;
                         break;
                     case GLUT_ACTIVE_SHIFT:
-                        if ('A' <= key && key <= 'Z') key += 32;
                         ptrPGE->olc_UpdateKeyState(Key::SHIFT, true);
                         break;
                     case GLUT_ACTIVE_CTRL:
+                        if ('a' <= key && key <= 'z') key -= 32;
                         ptrPGE->olc_UpdateKeyState(Key::CTRL, true);
                         break;
                     case GLUT_ACTIVE_ALT:
+                        if ('a' <= key && key <= 'z') key -= 32;
                         break;
                 }
 
@@ -3198,15 +3200,17 @@ namespace olc {
             glutKeyboardUpFunc([](unsigned char key, int x, int y) -> void {
                 switch (glutGetModifiers()) {
                     case 0: //This is when there are no modifiers
+                        if ('a' <= key && key <= 'z') key -= 32;
                         break;
                     case GLUT_ACTIVE_SHIFT:
-                        if ('A' <= key && key <= 'Z') key += 32;
                         ptrPGE->olc_UpdateKeyState(Key::SHIFT, false);
                         break;
                     case GLUT_ACTIVE_CTRL:
+                        if ('a' <= key && key <= 'z') key -= 32;
                         ptrPGE->olc_UpdateKeyState(Key::CTRL, false);
                         break;
                     case GLUT_ACTIVE_ALT:
+                        if ('a' <= key && key <= 'z') key -= 32;
                         //No ALT in PGE
                         break;
                 }
@@ -3217,41 +3221,11 @@ namespace olc {
 
             //Special keys
             glutSpecialFunc([](int key, int x, int y) -> void {
-                switch (key) { //Arrow keys overlap with ascii, thanks for foppelfb for pointing this out (https://github.com/MumflrFumperdink/olcPGEMac/issues/5)
-                    case GLUT_KEY_DOWN:
-                        key = 40;
-                        break;
-                    case GLUT_KEY_RIGHT:
-                        key = 39;
-                        break;
-                    case GLUT_KEY_UP:
-                        key = 38;
-                        break;
-                    case GLUT_KEY_LEFT:
-                        key = 37;
-                        break;
-                }
-                
                 if (mapKeys[key])
                     ptrPGE->olc_UpdateKeyState(mapKeys[key], true);
             });
 
             glutSpecialUpFunc([](int key, int x, int y) -> void {
-                switch (key) {
-                    case GLUT_KEY_DOWN:
-                        key = 40;
-                        break;
-                    case GLUT_KEY_RIGHT:
-                        key = 39;
-                        break;
-                    case GLUT_KEY_UP:
-                        key = 38;
-                        break;
-                    case GLUT_KEY_LEFT:
-                        key = 37;
-                        break;
-                }
-                
                 if (mapKeys[key])
                     ptrPGE->olc_UpdateKeyState(mapKeys[key], false);
             });
