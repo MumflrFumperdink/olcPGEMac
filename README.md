@@ -8,7 +8,7 @@ That's it!
 
 ## Installation
 
-### Xcode Installation
+### Xcode Installation 
 
 First, make sure you have Xcode, and if not, download it. All you need to get the project up and running in Xcode is to use the Shell script called, "setup.sh". Make sure you have all of the dependencies installed:
 
@@ -20,7 +20,22 @@ Then, you should open up Xcode (you should quit it if it is already open) and "C
 
 ![Image1](https://i.imgur.com/uYUP1xW.png)
 
-Once you name your app, and save it, you should see a screen like the following. Click the "Signing and Capabilities" tab at the top:
+Once you name your app, and save it, you should see a screen like the following. Now, before you can start using this with Xcode, you need to deal with the fact that libpng is unsigned otherwise you will recieve a runtime error. Here are the two ways to do that:
+
+#### Use Your Own Developer Codesign
+
+This method is preferred because you only need to do this once and then you can make as many projects as you like using libpng.
+
+In the Terminal, execute this command to sign the library:
+```sh
+sudo codesign -f -s "YOURDEVELOPEREMAIL" /usr/local/lib/libpng*.dylib
+```
+
+#### Disable Library Validation
+
+This method will need to be done for every project that uses libpng.
+
+Click the "Signing and Capabilities" tab at the top:
 
 ![Image2](https://i.imgur.com/PsQDDqW.jpg)
 
@@ -28,9 +43,10 @@ Once you are there, go down to the "Hardened Runtime" section and click on "Disa
 
 ![Image3](https://i.imgur.com/ku48xJZ.jpg)
 
-And that's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
 
-### Command Line Usage
+That's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
+
+### Using the Command Line
 
 Simply go inside the OneLoneCoder folder - there's a makefile. Use it in the terminal by typing this:
 
