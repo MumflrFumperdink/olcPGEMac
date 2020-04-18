@@ -46,7 +46,7 @@ Once you are there, go down to the "Hardened Runtime" section and click on "Disa
 
 That's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
 
-### Using the Command Line
+## Using the Command Line
 
 Simply go inside the OneLoneCoder folder - there's a makefile. Use it in the terminal by typing this:
 
