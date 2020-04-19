@@ -6,9 +6,20 @@ The [PixelGameEngine 2.0](https://github.com/OneLoneCoder/olcPixelGameEngine), b
 
 That's it!
 
-## Installation
+## Using the Command Line
 
-### Xcode Installation 
+Simply go inside the "PGE App.xctemplate" folder - there's a makefile. Use it in the terminal by typing this:
+
+```sh
+$ cd OneLoneCoder/PGE\ App.xctemplate
+$ make
+```
+
+You should end up with a file called 'ouput'. It should open a window like this:
+
+![Image4](https://i.ibb.co/hsz9SMF/Screen-Shot-2019-08-12-at-11-18-52-PM.png)
+
+## Xcode Installation
 
 First, make sure you have Xcode, and if not, download it. All you need to get the project up and running in Xcode is to use the Shell script called, "setup.sh". Make sure you have all of the dependencies installed:
 
@@ -45,16 +56,3 @@ Once you are there, go down to the "Hardened Runtime" section and click on "Disa
 
 
 That's it! You can go to main.cpp in the folder on the left to start coding. Build it first to make sure it works!
-
-## Using the Command Line
-
-Simply go inside the OneLoneCoder folder - there's a makefile. Use it in the terminal by typing this:
-
-```sh
-$ cd OneLoneCoder/PGE\ App.xctemplate
-$ make
-```
-
-You should end up with a file called 'ouput'. It should open a window like this:
-
-![Image4](https://i.ibb.co/hsz9SMF/Screen-Shot-2019-08-12-at-11-18-52-PM.png)
