@@ -39,7 +39,7 @@ This method is preferred because you only need to do this once and then you can 
 
 In the Terminal, execute this command to sign the library:
 ```sh
-sudo codesign -f -s "YOURDEVELOPEREMAIL" /usr/local/lib/libpng*.dylib
+sudo codesign -f -s "Mac Developer: YOURDEVELOPEREMAIL" /usr/local/lib/libpng*.dylib
 ```
 
 #### Disable Library Validation
