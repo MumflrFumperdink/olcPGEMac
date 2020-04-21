@@ -41,6 +41,7 @@ In the Terminal, execute this command to sign the library:
 ```sh
 sudo codesign -f -s "YOURDEVELOPEREMAIL" /usr/local/lib/libpng*.dylib
 ```
+If you get an ambiguous email error, try adding "Mac Developer: " at the start of the email quotations.
 
 #### Disable Library Validation
 
