@@ -1,6 +1,6 @@
 # olc::PGE 2.0 for Mac
 
-The [PixelGameEngine 2.0](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac in only the header file! The dependency that you must have is:
+The [PixelGameEngine 2.0](https://github.com/OneLoneCoder/olcPixelGameEngine), by [OneLoneCoder](https://onelonecoder.com/), has finally been fully ported to Mac in only the header file! __Make sure that your mac is at least on macOS 10.15__. The dependency that you must have is:
 
   - libpng (May be installed with [brew](https://brew.sh/), use the command ```brew install libpng```)
 
