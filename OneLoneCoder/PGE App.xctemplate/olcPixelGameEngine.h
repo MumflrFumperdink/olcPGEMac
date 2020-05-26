@@ -3067,40 +3067,10 @@ namespace olc
 // O------------------------------------------------------------------------------O
 namespace olc {
 
-//Custom Start
-    olc::rcode PixelGameEngine::Start()
-    {
-        if (platform->ApplicationStartUp() != olc::OK) return olc::FAIL;
-
-        // Construct the window
-        if (platform->CreateWindowPane({ 30,30 }, vWindowSize, bFullScreen) != olc::OK) return olc::FAIL;
-        olc_UpdateWindowSize(vWindowSize.x, vWindowSize.y);
-
-
-        if (platform->ThreadStartUp() == olc::FAIL)  return olc::FAIL;
-
-        olc_PrepareEngine();
-
-        if (!OnUserCreate()) return olc::FAIL;
-
-        glutWMCloseFunc([]() -> void {
-            platform->ThreadCleanUp();
-            platform->ApplicationCleanUp();
-            exit(0);
-        });
-
-        platform->StartSystemEventLoop();
-
-        //This code will not even be run but why not
-        if (platform->ApplicationCleanUp() != olc::OK) return olc::FAIL;
-
-        return olc::OK;
-    }
-
     class Platform_GLUT : public olc::Platform
     {
-    private:
     public:
+        static std::atomic<bool>* bActiveRef;
 
         virtual olc::rcode ApplicationStartUp() override {
             return olc::rcode::OK;
@@ -3129,7 +3099,21 @@ namespace olc {
                 return olc::rcode::FAIL;
         }
 
+        static void ExitMainLoop() {
+            if (!ptrPGE->OnUserDestroy()) {
+                *bActiveRef = true;
+                return;
+            }
+            platform->ThreadCleanUp();
+            platform->ApplicationCleanUp();
+            exit(0);
+        }
+
         static void ThreadFunct() {
+            if (!*bActiveRef) {
+                ExitMainLoop();
+                return;
+            }
             glutPostRedisplay();
         }
 
@@ -3282,6 +3266,38 @@ namespace olc {
         }
     };
 
+    std::atomic<bool>* Platform_GLUT::bActiveRef{ nullptr };
+
+    //Custom Start
+    olc::rcode PixelGameEngine::Start()
+    {
+        if (platform->ApplicationStartUp() != olc::OK) return olc::FAIL;
+
+        // Construct the window
+        if (platform->CreateWindowPane({ 30,30 }, vWindowSize, bFullScreen) != olc::OK) return olc::FAIL;
+        olc_UpdateWindowSize(vWindowSize.x, vWindowSize.y);
+
+
+        if (platform->ThreadStartUp() == olc::FAIL)  return olc::FAIL;
+
+        olc_PrepareEngine();
+
+        if (!OnUserCreate()) return olc::FAIL;
+
+        Platform_GLUT::bActiveRef = &bAtomActive;
+
+        glutWMCloseFunc(Platform_GLUT::ExitMainLoop);
+
+        bAtomActive = true;
+
+        platform->StartSystemEventLoop();
+
+        //This code will not even be run but why not
+        if (platform->ApplicationCleanUp() != olc::OK) return olc::FAIL;
+
+        return olc::OK;
+    }
+
     void pngReadStream(png_structp pngPtr, png_bytep data, png_size_t length)
     {
         png_voidp a = png_get_io_ptr(pngPtr);
@@ -3381,6 +3397,7 @@ namespace olc {
         return olc::FAIL;
     }
 }
+
 #endif
 // O------------------------------------------------------------------------------O
 // | END PLATFORM: GLUT                                                          |
