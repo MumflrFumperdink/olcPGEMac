@@ -2,7 +2,7 @@
     olcPixelGameEngine.h
 
     +-------------------------------------------------------------+
-    |           OneLoneCoder Pixel Game Engine v2.01              |
+    |           OneLoneCoder Pixel Game Engine v2.05              |
     |  "What do you need? Pixels... Lots of Pixels..." - javidx9  |
     +-------------------------------------------------------------+
 
@@ -111,7 +111,7 @@
     JackOJC, KrossX, Huhlig, Dragoneye, Appa, JustinRichardsMusic, SliceNDice
     Ralakus, Gorbit99, raoul, joshinils, benedani, Moros1138, SaladinAkara & MagetzUb
     for advice, ideas and testing, and I'd like to extend my appreciation to the
-    135K YouTube followers,    60+ Patreons and 6K Discord server members who give me
+    144K YouTube followers,    70+ Patreons and 6K Discord server members who give me
     the motivation to keep going with all this :D
 
     Significant Contributors: @MaGetzUb, @slavka, @Dragoneye & @Gorbit99
@@ -131,6 +131,10 @@
     David Barr, aka javidx9, �OneLoneCoder 2018, 2019, 2020
 
     2.01: Made renderer and platform static for multifile projects
+    2.02: Added Decal destructor, optimised Pixel constructor
+    2.03: Added FreeBSD flags, Added DrawStringDecal()
+    2.04: Windows Full-Screen bug fixed
+    2.05: Added DrawPartialWarpedDecal(), Added DrawPartialRotatedDecal()
 */
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +202,6 @@ int main()
 #include <list>
 #include <thread>
 #include <atomic>
-#include <condition_variable>
 #include <fstream>
 #include <map>
 #include <functional>
@@ -217,7 +220,7 @@ int main()
     #endif
 #endif
 
-#if defined(__linux__) || defined(__MINGW32__) || defined(__EMSCRIPTEN__)
+#if defined(__linux__) || defined(__MINGW32__) || defined(__EMSCRIPTEN__) || defined(__FreeBSD__)
     #if __cplusplus >= 201703L
         #undef USE_EXPERIMENTAL_FS
     #endif
@@ -457,6 +460,7 @@ namespace olc
     {
     public:
         Decal(olc::Sprite* spr);
+        virtual ~Decal();
         void Update();
 
     public: // But dont touch
@@ -504,6 +508,7 @@ namespace olc
         virtual void       DrawDecalQuad(const olc::DecalInstance& decal) = 0;
         virtual uint32_t   CreateTexture(const uint32_t width, const uint32_t height) = 0;
         virtual void       UpdateTexture(uint32_t id, olc::Sprite* spr) = 0;
+        virtual uint32_t   DeleteTexture(const uint32_t id) = 0;
         virtual void       ApplyTexture(uint32_t id) = 0;
         virtual void       UpdateViewport(const olc::vi2d& pos, const olc::vi2d& size) = 0;
         virtual void       ClearBuffer(olc::Pixel p, bool bDepth) = 0;
@@ -656,6 +661,12 @@ namespace olc
 
         void DrawRotatedDecal(const olc::vf2d& pos, olc::Decal* decal, const float fAngle, const olc::vf2d& center = { 0.0f, 0.0f }, const olc::vf2d& scale = { 1.0f,1.0f }, const olc::Pixel& tint = olc::WHITE);
 
+        void DrawStringDecal(const olc::vf2d& pos, const std::string& sText, const Pixel col = olc::WHITE, const olc::vf2d& scale = { 1.0f, 1.0f });
+        void DrawPartialRotatedDecal(const olc::vf2d& pos, olc::Decal* decal, const float fAngle, const olc::vf2d& center, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::vf2d& scale = { 1.0f, 1.0f }, const olc::Pixel& tint = olc::WHITE);
+
+        void DrawPartialWarpedDecal(olc::Decal* decal, const olc::vf2d(&pos)[4], const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint = olc::WHITE);
+        void DrawPartialWarpedDecal(olc::Decal* decal, const olc::vf2d* pos, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint = olc::WHITE);
+        void DrawPartialWarpedDecal(olc::Decal* decal, const std::array<olc::vf2d, 4>& pos, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint = olc::WHITE);
 
         // Draws a single line of text
         void DrawString(int32_t x, int32_t y, const std::string& sText, Pixel col = olc::WHITE, uint32_t scale = 1);
@@ -691,6 +702,7 @@ namespace olc
         float        fFrameTimer           = 1.0f;
         int            nFrameCount           = 0;
         Sprite*     fontSprite            = nullptr;
+        Decal*        fontDecal           = nullptr;
         Sprite*     pDefaultDrawTarget    = nullptr;
         std::vector<LayerDesc> vLayers;
         uint8_t        nTargetLayer          = 0;
@@ -795,7 +807,7 @@ namespace olc
     { r = 0; g = 0; b = 0; a = nDefaultAlpha; }
 
     Pixel::Pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
-    { r = red; g = green; b = blue; a = alpha; }
+    { n = red | (green << 8) | (blue << 16) | (alpha << 24); } // Thanks jarekpelczar
 
     Pixel::Pixel(uint32_t p)
     { n = p; }
@@ -974,7 +986,14 @@ namespace olc
         renderer->UpdateTexture(id, sprite);
     }
 
-
+    Decal::~Decal()
+    {
+        if (id != -1)
+        {
+            renderer->DeleteTexture(id);
+            id = -1;
+        }
+    }
 
     // O------------------------------------------------------------------------------O
     // | olc::ResourcePack IMPLEMENTATION                                             |
@@ -1185,8 +1204,6 @@ namespace olc
         if (vPixelSize.x <= 0 || vPixelSize.y <= 0 || vScreenSize.x <= 0 || vScreenSize.y <= 0)
             return olc::FAIL;
 
-        // Construct default font sheet
-        olc_ConstructFontSheet();
         return olc::OK;
     }
 
@@ -1847,6 +1864,60 @@ namespace olc
         vLayers[nTargetLayer].vecDecalInstance.push_back(di);
     }
 
+    void PixelGameEngine::DrawPartialRotatedDecal(const olc::vf2d& pos, olc::Decal* decal, const float fAngle, const olc::vf2d& center, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::vf2d& scale, const olc::Pixel& tint)
+    {
+        DecalInstance di;
+        di.decal = decal;
+        di.tint = tint;
+        di.pos[0] = (olc::vf2d(0.0f, 0.0f) - center) * scale;
+        di.pos[1] = (olc::vf2d(0.0f, source_size.y) - center) * scale;
+        di.pos[2] = (olc::vf2d(source_size.x, source_size.y) - center) * scale;
+        di.pos[3] = (olc::vf2d(source_size.x, 0.0f) - center) * scale;
+        float c = cos(fAngle), s = sin(fAngle);
+        for (int i = 0; i < 4; i++)
+        {
+            di.pos[i] = pos + olc::vf2d(di.pos[i].x * c - di.pos[i].y * s, di.pos[i].x * s + di.pos[i].y * c);
+            di.pos[i] = di.pos[i] * vInvScreenSize * 2.0f - olc::vf2d(1.0f, 1.0f);
+            di.pos[i].y *= -1.0f;
+        }
+
+        olc::vf2d uvtl = source_pos * decal->vUVScale;
+        olc::vf2d uvbr = uvtl + (source_size * decal->vUVScale);
+        di.uv[0] = { uvtl.x, uvtl.y }; di.uv[1] = { uvtl.x, uvbr.y };
+        di.uv[2] = { uvbr.x, uvbr.y }; di.uv[3] = { uvbr.x, uvtl.y };
+
+        vLayers[nTargetLayer].vecDecalInstance.push_back(di);
+    }
+
+    void PixelGameEngine::DrawPartialWarpedDecal(olc::Decal* decal, const olc::vf2d* pos, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint)
+    {
+        DecalInstance di;
+        di.decal = decal;
+        di.tint = tint;
+        olc::vf2d center;
+        float rd = ((pos[2].x - pos[0].x) * (pos[3].y - pos[1].y) - (pos[3].x - pos[1].x) * (pos[2].y - pos[0].y));
+        if (rd != 0)
+        {
+            olc::vf2d uvtl = source_pos * decal->vUVScale;
+            olc::vf2d uvbr = uvtl + (source_size * decal->vUVScale);
+            di.uv[0] = { uvtl.x, uvtl.y }; di.uv[1] = { uvtl.x, uvbr.y };
+            di.uv[2] = { uvbr.x, uvbr.y }; di.uv[3] = { uvbr.x, uvtl.y };
+
+            rd = 1.0f / rd;
+            float rn = ((pos[3].x - pos[1].x) * (pos[0].y - pos[1].y) - (pos[3].y - pos[1].y) * (pos[0].x - pos[1].x)) * rd;
+            float sn = ((pos[2].x - pos[0].x) * (pos[0].y - pos[1].y) - (pos[2].y - pos[0].y) * (pos[0].x - pos[1].x)) * rd;
+            if (!(rn < 0.f || rn > 1.f || sn < 0.f || sn > 1.f)) center = pos[0] + rn * (pos[2] - pos[0]);
+            float d[4];    for (int i = 0; i < 4; i++)    d[i] = (pos[i] - center).mag();
+            for (int i = 0; i < 4; i++)
+            {
+                float q = d[i] == 0.0f ? 1.0f : (d[i] + d[(i + 2) & 3]) / d[(i + 2) & 3];
+                di.uv[i] *= q; di.w[i] *= q;
+                di.pos[i] = { (pos[i].x * vInvScreenSize.x) * 2.0f - 1.0f, ((pos[i].y * vInvScreenSize.y) * 2.0f - 1.0f) * -1.0f };
+            }
+            vLayers[nTargetLayer].vecDecalInstance.push_back(di);
+        }
+    }
+
     void PixelGameEngine::DrawWarpedDecal(olc::Decal* decal, const olc::vf2d* pos, const olc::Pixel& tint)
     {
         // Thanks Nathan Reed, a brilliant article explaining whats going on here
@@ -1874,13 +1945,34 @@ namespace olc
     }
 
     void PixelGameEngine::DrawWarpedDecal(olc::Decal* decal, const std::array<olc::vf2d, 4>& pos, const olc::Pixel& tint)
-    {
-        DrawWarpedDecal(decal, pos.data(), tint);
-    }
+    { DrawWarpedDecal(decal, pos.data(), tint); }
 
     void PixelGameEngine::DrawWarpedDecal(olc::Decal* decal, const olc::vf2d(&pos)[4], const olc::Pixel& tint)
+    { DrawWarpedDecal(decal, &pos[0], tint); }
+
+    void PixelGameEngine::DrawPartialWarpedDecal(olc::Decal* decal, const std::array<olc::vf2d, 4>& pos, const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint)
+    { DrawPartialWarpedDecal(decal, pos.data(), source_pos, source_size, tint); }
+
+    void PixelGameEngine::DrawPartialWarpedDecal(olc::Decal* decal, const olc::vf2d(&pos)[4], const olc::vf2d& source_pos, const olc::vf2d& source_size, const olc::Pixel& tint)
+    { DrawPartialWarpedDecal(decal, &pos[0], source_pos, source_size, tint); }
+
+    void PixelGameEngine::DrawStringDecal(const olc::vf2d& pos, const std::string& sText, const Pixel col, const olc::vf2d& scale)
     {
-        DrawWarpedDecal(decal, &pos[0], tint);
+        olc::vf2d spos = { 0.0f, 0.0f };
+        for (auto c : sText)
+        {
+            if (c == '\n')
+            {
+                spos.x = 0; spos.y += 8.0f * scale.y;
+            }
+            else
+            {
+                int32_t ox = (c - 32) % 16;
+                int32_t oy = (c - 32) / 16;
+                DrawPartialDecal(pos + spos, fontDecal, { float(ox) * 8.0f, float(oy) * 8.0f }, { 8.0f, 8.0f }, scale, col);
+                spos.x += 8.0f * scale.x;
+            }
+        }
     }
 
     void PixelGameEngine::DrawString(const olc::vi2d& pos, const std::string& sText, Pixel col, uint32_t scale)
@@ -2051,6 +2143,9 @@ namespace olc
         // Start OpenGL, the context is owned by the game thread
         if (platform->CreateGraphics(bFullScreen, bEnableVSYNC, vViewPos, vViewSize) == olc::FAIL) return;
 
+        // Construct default font sheet
+        olc_ConstructFontSheet();
+
         // Create Primary Layer "0"
         CreateLayer();
         vLayers[0].bUpdate = true;
@@ -2203,6 +2298,8 @@ namespace olc
                 if (++py == 48) { px++; py = 0; }
             }
         }
+
+        fontDecal = new olc::Decal(fontSprite);
     }
 
     // Need a couple of statics as these are singleton instances
@@ -2232,7 +2329,7 @@ namespace olc
     typedef HGLRC glRenderContext_t;
 #endif
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
     #include <GL/gl.h>
     namespace X11
     {
@@ -2268,7 +2365,7 @@ namespace olc
         glRenderContext_t glRenderContext = 0;
     #endif
 
-    #if defined(__linux__)
+    #if defined(__linux__)  || defined(__FreeBSD__)
         X11::Display*                 olc_Display = nullptr;
         X11::Window*                 olc_Window = nullptr;
         X11::XVisualInfo*            olc_VisualInfo = nullptr;
@@ -2321,7 +2418,7 @@ namespace olc
             if (wglSwapInterval && !bVSYNC) wglSwapInterval(0);
         #endif
 
-        #if defined(__linux__)
+        #if defined(__linux__) || defined(__FreeBSD__)
             using namespace X11;
             // Linux has tighter coupling between OpenGL and X11, so we store
             // various "platform" handles in the renderer
@@ -2378,7 +2475,7 @@ namespace olc
         #if defined(__APPLE__)
             glutDestroyWindow(glutGetWindow());
         #endif
-            return olc::rcode::FAIL;
+            return olc::rcode::OK;
         }
 
         void DisplayFrame() override
@@ -2387,7 +2484,7 @@ namespace olc
             SwapBuffers(glDeviceContext);
         #endif
 
-        #if defined(__linux__)
+        #if defined(__linux__) || defined(__FreeBSD__)
             X11::glXSwapBuffers(olc_Display, *olc_Window);
         #endif
 
@@ -2437,6 +2534,12 @@ namespace olc
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            return id;
+        }
+
+        uint32_t DeleteTexture(const uint32_t id) override
+        {
+            glDeleteTextures(1, &id);
             return id;
         }
 
@@ -2587,6 +2690,8 @@ namespace olc
             DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
             DWORD dwStyle = WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_THICKFRAME;
 
+            olc::vi2d vTopLeft = vWindowPos;
+
             // Handle Fullscreen
             if (bFullScreen)
             {
@@ -2596,6 +2701,8 @@ namespace olc
                 MONITORINFO mi = { sizeof(mi) };
                 if (!GetMonitorInfo(hmon, &mi)) return olc::rcode::FAIL;
                 vWindowSize = { mi.rcMonitor.right, mi.rcMonitor.bottom };
+                vTopLeft.x = 0;
+                vTopLeft.y = 0;
             }
 
             // Keep client size as requested
@@ -2605,7 +2712,7 @@ namespace olc
             int height = rWndRect.bottom - rWndRect.top;
 
             olc_hWnd = CreateWindowEx(dwExStyle, olcT("OLC_PIXEL_GAME_ENGINE"), olcT(""), dwStyle,
-                vWindowPos.x, vWindowPos.y, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
+                vTopLeft.x, vTopLeft.y, width, height, NULL, NULL, GetModuleHandle(nullptr), this);
 
             // Create Keyboard Mapping
             mapKeys[0x00] = Key::NONE;
@@ -2739,7 +2846,7 @@ namespace olc
 // O------------------------------------------------------------------------------O
 // | START PLATFORM: LINUX                                                        |
 // O------------------------------------------------------------------------------O
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
 namespace olc
 {
     class Platform_Linux : public olc::Platform
@@ -3414,7 +3521,7 @@ namespace olc
         platform = std::make_unique<olc::Platform_Windows>();
 #endif
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__FreeBSD__)
         platform = std::make_unique<olc::Platform_Linux>();
 #endif
 
