@@ -2460,8 +2460,7 @@ namespace olc
         void UpdateViewport(const olc::vi2d& pos, const olc::vi2d& size) override
         {
             #if defined(__APPLE__)
-                glutReshapeWindow(size.x, size.y);
-                if (mFullScreen) glutFullScreen();
+                if (!mFullScreen) glutReshapeWindow(size.x, size.y);
             #else
                 glViewport(pos.x, pos.y, size.x, size.y);
             #endif
@@ -3128,6 +3127,8 @@ namespace olc {
 
             if (bFullScreen)
             {
+                vWindowSize.x = glutGet(GLUT_SCREEN_WIDTH);
+                vWindowSize.y = glutGet(GLUT_SCREEN_HEIGHT);
                 glutFullScreen();
             }
 
