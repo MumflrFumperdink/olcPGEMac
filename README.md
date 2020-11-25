@@ -25,7 +25,7 @@ First, make sure you have Xcode, and if not, download it. All you need to get th
 
 ```sh
 $ cd olcPGEMac
-$ ./setup.sh
+$ sudo ./setup.sh
 ```
 Then, you should open up Xcode (you should quit it if it is already open) and "Create a new Xcode Project". In the macOS tab, you should see a OneLoneCoder section with a PGE app:
 
