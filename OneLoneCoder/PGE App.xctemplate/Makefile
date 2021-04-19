@@ -1,4 +1,4 @@
-LIBRARIES = -framework OpenGL -framework GLUT -lpng
+LIBRARIES = -framework OpenGL -framework GLUT -framework Carbon -lpng
 
 EXE = output
 
