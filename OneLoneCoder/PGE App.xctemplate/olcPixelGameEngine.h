@@ -4850,6 +4850,10 @@ namespace olc {
             SEL scrollWheelSel = sel_registerName("scrollWheel:");
             bool resultAddMethod = class_addMethod(GLUTViewClass, scrollWheelSel, (IMP)scrollWheelUpdate,  "v@:@");
             assert(resultAddMethod);
+
+            SEL drawRectSel = sel_registerName("drawRect:");
+            resultAddMethod = class_replaceMethod(GLUTViewClass, drawRectSel, (IMP)DrawFunct,  "v@:@");
+            assert(resultAddMethod);
 #endif
 
             renderer->PrepareDevice();
