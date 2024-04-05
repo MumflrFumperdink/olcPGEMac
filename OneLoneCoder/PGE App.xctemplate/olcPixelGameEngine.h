@@ -345,6 +345,7 @@ int main()
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <assert.h>
 #pragma endregion
 
 #define PGE_VER 215
